@@ -86,6 +86,62 @@ not in (select ct.MaSP from cthd ct join hoadon hd on ct.SoHD = hd.SoHoaDon wher
 select sp.MaSP, sp.TenSP from sanpham sp
 where sp.MaSP not in (select ct.MaSP from cthd ct join hoadon hd on ct.SoHD = hd.SoHoaDon where hd.NgayMuaHang like '2006') and sp.NuocSX = 'Trung Quoc';
 
+-- 18 Có bao nhiêu hóa đơn không phải của khách hàng đăng ký thành viên mua?
+select count (SoHoaDon) - count (SoHD) as 'số hóa đơn không phải của khách hàng đăng ký thành viên mua' from hoadon;
+
+-- 19 laay ra gia tri hoa don thap nhat va gia tri hoa don cao nhat
+
+select MAX(TRIGIA) from hoadon;
+select MIN(TRIGIA) from hoadon;
+
+-- 20 tri gia trung binh cua tat ca hoa don duoc ban ra trong nam 2006 la bao nhieu
+select ROUND( AVG(TRIGIA), 2 )
+from hoadon 
+where NgayMuaHang like  '2006%';
+
+-- 21 tinh doanh thu ban hang trong nam 2006
+select SUM(TRIGIA) from hoadon where NgayMuaHang like '2006%';
+
+-- 22 tim so hoa don co gia tri cao nhat trong nam 2006
+select MAX(SoHoaDon) from hoadon where NgayMuaHang like '2006%';
+
+-- 23 tim ho ten khach hang da mua hoa don co gia tri cao nhat trong nam 2006
+select kh.MaKH, kh.HOTEN from khachhang kh join hoadon hd on kh.MaKH = hd.MaKH 
+where hd.TRIGIA = MAX(hd.TRIGIA) ;
+
+-- 24 
+select MaKH HOTEN from khachhang kh
+join  (select  distinct DOANHSO from KHACHHANG order by DOANHSO desc limit 0,3) as maxDoanhSo
+on kh.DOANHSO = maxDoanhSo.DOANHSO; 
+ 
+-- 25. In ra danh sách các sản phẩm (MASP, TENSP) có giá bán bằng 1 trong 3 mức giá cao nhất.
+select sp.MASP, sp.TENSP from sanpham sp
+join (select  distinct Gia from sanpham order by Gia desc limit 0,3) as maxsanpham on sp.Gia = maxsanpham.Gia ;
+
+-- 26. In ra danh sách các sản phẩm (MASP, TENSP) do “Trung Quốc” sản xuất có giá bằng 1 trong 3 mức iá thấp nhất (của tất cả các sản phẩm).
+select sp.MASP, sp.TENSP from sanpham sp
+join (select  distinct Gia from sanpham order by Gia asc limit 1,3) as minsanpham on sp.Gia = minsanpham.Gia and NuocSX = 'Trung Quoc';
+
+-- 27. In ra danh sách các sản phẩm (MASP, TENSP) do “Trung Quốc” sản xuất có giá bằng 1 trong 3 mức iá thấp nhất (của sản phẩm do “Trung Quốc” sản xuất).
+select sp.MASP, sp.TENSP from sanpham sp
+join (select  distinct Gia from sanpham order by Gia asc limit 1,3) as minsanpham on sp.Gia = minsanpham.Gia and NuocSX = 'Trung Quoc';
+
+
+select  MaKH HOTEN from khachhang kh
+join  (select  distinct DOANHSO from KHACHHANG order by DOANHSO desc limit 0,3) as maxDoanhSo on kh.DOANHSO = maxDoanhSo.DOANHSO; 
+
+-- 30. Tính tổng số sản phẩm của từng nước sản xuất.
+select count(MASP) as "tong so san pham", NUOCSX  from sanpham
+group by NUOCSX;
+
+
+
+
+
+
+
+
+
 
 
 
